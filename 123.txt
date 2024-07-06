@@ -1,0 +1,10 @@
+fys@pi:~/Desktop $ sudo python3 text.py 
+Traceback (most recent call last):
+  File "text.py", line 58, in <module>
+    main()
+  File "text.py", line 40, in main
+    objects = detect_objects(frame, hsv, color_ranges)
+  File "text.py", line 13, in detect_objects
+    contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+ValueError: too many values to unpack (expected 2)
+
