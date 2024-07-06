@@ -1,33 +1,36 @@
 import cv2
 import numpy as np
 
+
 def get_color_mask(hsv, lower_bound, upper_bound):
     return cv2.inRange(hsv, lower_bound, upper_bound)
+
 
 def detect_objects(frame, hsv, color_ranges):
     objects = []
     for color_name, (lower, upper, obj_num) in color_ranges.items():
         mask = get_color_mask(hsv, lower, upper)
-        
+
         # 处理 findContours 函数的不同返回值
         contours_info = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         contours = contours_info[0] if len(contours_info) == 2 else contours_info[1]
-        
+
         for contour in contours:
             area = cv2.contourArea(contour)
-            if area > 500:  # 过滤掉小面积的噪声
+            if area > 3000:  # 过滤掉小面积的噪声
                 x, y, w, h = cv2.boundingRect(contour)
                 objects.append((x, y, w, h, obj_num))
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
                 cv2.putText(frame, str(obj_num), (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 255, 12), 2)
     return objects
 
+
 def main():
     cap = cv2.VideoCapture(0)
     color_ranges = {
-        "red": (np.array([0, 120, 70]), np.array([10, 255, 255]), 1),    # 红色范围
-        "green": (np.array([36, 100, 100]), np.array([86, 255, 255]), 2), # 绿色范围
-        "blue": (np.array([94, 80, 2]), np.array([126, 255, 255]), 3)    # 蓝色范围
+        "red": (np.array([156, 43, 46]), np.array([180, 255, 255]), 1),  # 红色范围
+        "green": (np.array([36, 100, 100]), np.array([86, 255, 255]), 2),  # 绿色范围
+        "blue": (np.array([100, 150, 50]), np.array([126, 255, 255]), 3)  # 蓝色范围
     }
 
     detected_order = []
@@ -54,6 +57,7 @@ def main():
 
     cap.release()
     cv2.destroyAllWindows()
+
 
 if __name__ == "__main__":
     main()
